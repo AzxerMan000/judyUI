@@ -1,0 +1,172 @@
+-- SimpleUILib.lua (hosted on GitHub)
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local PlayerGui = Player:WaitForChild("PlayerGui")
+
+local Theme = {
+    Background = Color3.fromRGB(35, 35, 35),
+    TopBar = Color3.fromRGB(50, 50, 50),
+    Section = Color3.fromRGB(45, 45, 45),
+    Button = Color3.fromRGB(0, 170, 255),
+    Text = Color3.new(1, 1, 1)
+}
+
+local function roundify(obj)
+    local uic = Instance.new("UICorner")
+    uic.CornerRadius = UDim.new(0, 6)
+    uic.Parent = obj
+end
+
+local function makeDraggable(frame)
+    local dragging, dragInput, dragStart, startPos
+
+    frame.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+            dragging = true
+            dragStart = input.Position
+            startPos = frame.Position
+            dragInput = input
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    game:GetService("UserInputService").InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X,
+                                       startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+end
+
+local function CreateUI(title)
+    local gui = Instance.new("ScreenGui", PlayerGui)
+    gui.Name = "SimpleUI"
+    gui.ResetOnSpawn = false
+
+    local main = Instance.new("Frame", gui)
+    main.Size = UDim2.new(0, 500, 0, 350)
+    main.Position = UDim2.new(0.5, -250, 0.5, -175)
+    main.BackgroundColor3 = Theme.Background
+    roundify(main)
+    makeDraggable(main)
+
+    local top = Instance.new("TextLabel", main)
+    top.Size = UDim2.new(1, 0, 0, 30)
+    top.BackgroundColor3 = Theme.TopBar
+    top.Text = title
+    top.Font = Enum.Font.GothamBold
+    top.TextSize = 16
+    top.TextColor3 = Theme.Text
+    roundify(top)
+
+    local tabBar = Instance.new("Frame", main)
+    tabBar.Size = UDim2.new(1, 0, 0, 35)
+    tabBar.Position = UDim2.new(0, 0, 0, 30)
+    tabBar.BackgroundTransparency = 1
+    local tabLayout = Instance.new("UIListLayout", tabBar)
+    tabLayout.FillDirection = Enum.FillDirection.Horizontal
+    tabLayout.Padding = UDim.new(0, 6)
+
+    local content = Instance.new("Frame", main)
+    content.Size = UDim2.new(1, -20, 1, -75)
+    content.Position = UDim2.new(0, 10, 0, 70)
+    content.BackgroundTransparency = 1
+
+    local tabs = {}
+
+    local function CreateTab(tabName)
+        local tabFrame = Instance.new("Frame", content)
+        tabFrame.Size = UDim2.new(1, 0, 1, 0)
+        tabFrame.BackgroundTransparency = 1
+        tabFrame.Visible = false
+        local layout = Instance.new("UIListLayout", tabFrame)
+        layout.SortOrder = Enum.SortOrder.LayoutOrder
+        layout.Padding = UDim.new(0, 10)
+
+        local btn = Instance.new("TextButton", tabBar)
+        btn.Size = UDim2.new(0, 100, 1, 0)
+        btn.Text = tabName
+        btn.BackgroundColor3 = Theme.Section
+        btn.TextColor3 = Theme.Text
+        btn.Font = Enum.Font.Gotham
+        btn.TextSize = 14
+        roundify(btn)
+
+        btn.MouseButton1Click:Connect(function()
+            for _, t in pairs(tabs) do
+                t.Frame.Visible = false
+            end
+            tabFrame.Visible = true
+        end)
+
+        local function CreateSection(title)
+            local sec = Instance.new("Frame", tabFrame)
+            sec.Size = UDim2.new(1, 0, 0, 100)
+            sec.BackgroundColor3 = Theme.Section
+            roundify(sec)
+
+            local label = Instance.new("TextLabel", sec)
+            label.Size = UDim2.new(1, -20, 0, 20)
+            label.Position = UDim2.new(0, 10, 0, 5)
+            label.Text = title
+            label.Font = Enum.Font.GothamBold
+            label.TextSize = 14
+            label.TextColor3 = Theme.Text
+            label.BackgroundTransparency = 1
+            label.TextXAlignment = Enum.TextXAlignment.Left
+
+            local holder = Instance.new("Frame", sec)
+            holder.Size = UDim2.new(1, -20, 0, 60)
+            holder.Position = UDim2.new(0, 10, 0, 30)
+            holder.BackgroundTransparency = 1
+
+            local holderLayout = Instance.new("UIListLayout", holder)
+            holderLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            holderLayout.Padding = UDim.new(0, 5)
+
+            local function CreateButton(text, callback)
+                local b = Instance.new("TextButton", holder)
+                b.Size = UDim2.new(1, 0, 0, 30)
+                b.BackgroundColor3 = Theme.Button
+                b.Font = Enum.Font.Gotham
+                b.TextSize = 14
+                b.TextColor3 = Theme.Text
+                b.Text = text
+                roundify(b)
+
+                b.MouseButton1Click:Connect(function()
+                    if callback then callback() end
+                end)
+            end
+
+            return {
+                CreateButton = CreateButton
+            }
+        end
+
+        local tabData = {
+            Frame = tabFrame,
+            CreateSection = CreateSection
+        }
+
+        table.insert(tabs, tabData)
+
+        if #tabs == 1 then
+            tabFrame.Visible = true
+        end
+
+        return tabData
+    end
+
+    return {
+        CreateTab = CreateTab
+    }
+end
+
+return CreateUI
