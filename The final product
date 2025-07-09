@@ -1,0 +1,18 @@
+--the final product 
+
+local url = ""
+
+local libCode = game:HttpGet(url)
+local CreateUI = loadstring(libCode)()
+
+local window = CreateUI("Untitled")
+local tab = window:CreateTab("untitled")
+local section = tab:CreateSection("untitled")
+
+section:CreateButton("untitled", function()
+    print("Hello world")
+end)
+
+section:CreateButton("untitled", function()
+    warn("Test")
+end)
