@@ -1,4 +1,4 @@
-local SimpleUI = loadstring(game:HttpGet(""))()
+local SimpleUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/AzxerMan000/judyUI/refs/heads/main/The%20main%20gui"))()
 local main = SimpleUI("My UI")
 
 local tab1 = main.CreateTab("Tab 1")
