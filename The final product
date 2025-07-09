@@ -1,18 +1,14 @@
---the final product 
+local SimpleUI = loadstring(game:HttpGet(""))()
+local main = SimpleUI("My UI")
 
-local url = ""
-
-local libCode = game:HttpGet(url)
-local CreateUI = loadstring(libCode)()
-
-local window = CreateUI("Untitled")
-local tab = window:CreateTab("untitled")
-local section = tab:CreateSection("untitled")
-
-section:CreateButton("untitled", function()
-    print("Hello world")
+local tab1 = main.CreateTab("Tab 1")
+local section1 = tab1.CreateSection("First Section")
+section1.CreateButton("Click Me", function()
+    print("Button clicked!")
 end)
 
-section:CreateButton("untitled", function()
-    warn("Test")
+local tab2 = main.CreateTab("Tab 2")
+local section2 = tab2.CreateSection("Second Section")
+section2.CreateButton("Another Button", function()
+    print("Second clicked")
 end)
