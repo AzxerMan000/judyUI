@@ -2,6 +2,14 @@ local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerGui = Player:WaitForChild("PlayerGui")
 
+local enableKeySystem = true -- default value
+
+local UI = {}
+
+function UI.SetKeySystemEnabled(value)
+    enableKeySystem = value
+end
+
 local Theme = {
     Background = Color3.fromRGB(35, 35, 35),
     TopBar = Color3.fromRGB(50, 50, 50),
@@ -187,4 +195,18 @@ local function CreateUI(title)
     }
 end
 
-return CreateUI
+return function(title, config)
+    config = config or {}
+    local enabled = config.enableKeySystem
+    if enabled == nil then
+        enabled = true -- default enabled
+    end
+
+    if enabled then
+        promptKeyInput(function()
+            CreateUI(title)
+        end)
+    else
+        return CreateUI(title)
+    end
+end
