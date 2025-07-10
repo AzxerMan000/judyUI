@@ -174,8 +174,6 @@ minimizeButton.TextColor3 = Color3.new(0, 0, 0)
 minimizeButton.AutoButtonColor = true
 roundify(minimizeButton)
 
-
-
 minimizeButton.MouseButton1Click:Connect(function()
     if minimized then
         -- Restore size
