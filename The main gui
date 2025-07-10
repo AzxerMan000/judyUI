@@ -146,6 +146,50 @@ local function CreateUI(title)
     top.TextXAlignment = Enum.TextXAlignment.Left
     roundify(top)
 
+local closeButton = Instance.new("TextButton", main)
+closeButton.Size = UDim2.new(0, 30, 0, 30)
+closeButton.Position = UDim2.new(1, -35, 0, 0) -- top right corner inside main frame
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80)
+closeButton.Text = "X"
+closeButton.Font = Enum.Font.GothamBold
+closeButton.TextSize = 18
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.AutoButtonColor = true
+roundify(closeButton)
+
+closeButton.MouseButton1Click:Connect(function()
+    main.Parent:Destroy()  -- destroy the whole ScreenGui (SimpleUI)
+end)
+
+local minimized = false
+
+local minimizeButton = Instance.new("TextButton", main)
+minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+minimizeButton.Position = UDim2.new(1, -70, 0, 0) -- next to the close button
+minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 200, 80)
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 22
+minimizeButton.TextColor3 = Color3.new(0, 0, 0)
+minimizeButton.AutoButtonColor = true
+roundify(minimizeButton)
+
+minimizeButton.MouseButton1Click:Connect(function()
+    if minimized then
+        -- Restore size
+        main.Size = UDim2.new(0, 500, 0, 350)
+        content.Visible = true
+        minimized = false
+        minimizeButton.Text = "-"
+    else
+        -- Minimize size (just show top bar)
+        main.Size = UDim2.new(0, 500, 0, 30)
+        content.Visible = false
+        minimized = true
+        minimizeButton.Text = "+"
+    end
+end)
+
     local tabBar = Instance.new("Frame", main)
     tabBar.Size = UDim2.new(1, 0, 0, 35)
     tabBar.Position = UDim2.new(0, 0, 0, 30)
