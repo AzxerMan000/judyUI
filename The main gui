@@ -174,6 +174,8 @@ minimizeButton.TextColor3 = Color3.new(0, 0, 0)
 minimizeButton.AutoButtonColor = true
 roundify(minimizeButton)
 
+at
+
 minimizeButton.MouseButton1Click:Connect(function()
     if minimized then
         -- Restore size
@@ -200,9 +202,31 @@ end)
     tabLayout.Padding = UDim.new(0, 6)
 
     local content = Instance.new("Frame", main)
-    content.Size = UDim2.new(1, -20, 1, -75)
-    content.Position = UDim2.new(0, 10, 0, 70)
-    content.BackgroundTransparency = 1
+content.Size = UDim2.new(1, -20, 1, -75)
+content.Position = UDim2.new(0, 10, 0, 70)
+content.BackgroundTransparency = 1
+
+-- 👇 Paste this below
+local minimizeButton = Instance.new("TextButton", main)
+minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+minimizeButton.Position = UDim2.new(1, -65, 0, 0)
+minimizeButton.BackgroundColor3 = Theme.Section
+minimizeButton.TextColor3 = Theme.Text
+minimizeButton.Text = "-"
+minimizeButton.Font = Enum.Font.GothamBold
+minimizeButton.TextSize = 14
+roundify(minimizeButton)
+
+local isMinimized = false
+
+minimizeButton.MouseButton1Click:Connect(function()
+    isMinimized = not isMinimized
+    content.Visible = not isMinimized
+    tabBar.Visible = not isMinimized
+    minimizeButton.Text = isMinimized and "+" or "-"
+    -- Optional shrinking:
+    -- main.Size = isMinimized and UDim2.new(0, 500, 0, 40) or UDim2.new(0, 500, 0, 350)
+end)
 
     local tabs = {}
 
